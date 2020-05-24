@@ -1,6 +1,7 @@
 use super::math::vec2::Vec2;
 use super::spatial::Mobile;
 
+#[derive(Clone)]
 pub struct Circle {
     position: Vec2, //Really used when the position could differ from the body's center of mass;
     rotation: f32,

@@ -1,11 +1,11 @@
 use super::math::toroidal;
-use super::body::Body;
+use super::body::RigidBody;
 
 use std::time::Duration;
 
 pub struct Space {
     dimension: toroidal::Dimension,
-    bodies: Vec<Body>,
+    bodies: Vec<RigidBody>,
 }
 
 impl Space {
@@ -16,11 +16,11 @@ impl Space {
         }
     }
 
-    pub fn add(&mut self, body: Body) {
+    pub fn add(&mut self, body: RigidBody) {
         self.bodies.push(body);
     }
 
-    pub fn update(&self, interval: Duration) {
+    pub fn update(&mut self, interval: Duration) {
         //TODO
     }
 }
