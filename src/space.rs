@@ -16,6 +16,10 @@ impl Space {
         }
     }
 
+    pub fn dimension(&self) -> &toroidal::Dimension {
+        &self.dimension
+    }
+
     pub fn add(&mut self, body: RigidBody) {
         self.bodies.push(body);
     }
