@@ -1,7 +1,7 @@
 use torophy::{Space, RigidBody, Circle, Vec2};
 use std::time::Duration;
 
-mod util;
+mod monitor;
 
 fn main() {
     let shape1 = Circle::new(Vec2::xy(200.0, 200.0), 30.0);
@@ -18,8 +18,8 @@ fn main() {
     space.add(body1);
     space.add(body2);
 
-    util::GraphicMonitor::new(&mut space)
-        .run_with(|space: &mut Space| {
+    monitor::GraphicMonitor::new(space)
+        .main_loop(|space: &mut Space| {
             space.update(Duration::from_millis(1));
         }
     );
