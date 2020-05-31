@@ -1,7 +1,7 @@
 use torophy::{Space};
 
 use glium::glutin;
-use glium::glutin::event::{Event, WindowEvent};
+use glium::glutin::event::{Event, WindowEvent, DeviceEvent, VirtualKeyCode, ElementState, ModifiersState};
 use glium::glutin::event_loop::{ControlFlow, EventLoop};
 use glium::glutin::window::WindowBuilder;
 use glium::Surface;
@@ -11,13 +11,17 @@ use std::time::Instant;
 
 mod ui;
 mod drawing;
+mod renderer;
 
 pub struct GraphicMonitor {
     display: glium::Display,
     event_loop: EventLoop<()>,
+    renderer: renderer::Renderer,
+
     imgui: imgui::Context,
     imgui_renderer: Renderer,
     imgui_platform: WinitPlatform,
+
     space: Space,
 }
 
@@ -31,11 +35,14 @@ impl GraphicMonitor {
             .with_inner_size(glutin::dpi::LogicalSize::new(width, height));
 
         let glutin_context = glutin::ContextBuilder::new()
+            .with_multisampling(8)
             .with_vsync(true);
 
         let event_loop = EventLoop::new();
         let display = glium::Display::new(window_builder, glutin_context, &event_loop)
             .expect("Failed to initialize glium display");
+
+        let renderer = renderer::Renderer::new(&display);
 
         let mut imgui = imgui::Context::create();
         imgui.set_ini_filename(None);
@@ -66,6 +73,7 @@ impl GraphicMonitor {
         GraphicMonitor {
             display,
             event_loop,
+            renderer,
             imgui,
             imgui_renderer,
             imgui_platform,
@@ -75,8 +83,9 @@ impl GraphicMonitor {
 
     pub fn main_loop<F>(self, mut frame_action: F)
     where F: 'static + FnMut(&mut Space) {
-        let GraphicMonitor { display, event_loop, mut imgui, mut imgui_renderer, mut imgui_platform, mut space } = self;
+        let GraphicMonitor { display, event_loop, renderer, mut imgui, mut imgui_renderer, mut imgui_platform, mut space } = self;
         let mut last_frame = Instant::now();
+        let mut ctrl_key = false;
         event_loop.run(move |event, _, control_flow| {
             let gl_window = display.gl_window();
             match event {
@@ -93,7 +102,7 @@ impl GraphicMonitor {
                     let mut target = display.draw();
                     target.clear_color(0.0, 0.0, 0.0, 1.0);
 
-                    drawing::draw_space(&mut target, &space);
+                    drawing::draw_space(&renderer, &mut target, &space);
 
                     let mut imgui_ui = imgui.frame();
                     ui::draw_ui(&mut imgui_ui);
@@ -104,6 +113,14 @@ impl GraphicMonitor {
                     target.finish().unwrap();
                 }
                 Event::WindowEvent { event: WindowEvent::CloseRequested, .. } => *control_flow = ControlFlow::Exit,
+                Event::DeviceEvent { event: DeviceEvent::ModifiersChanged(modifiers), .. } => { ctrl_key = modifiers.ctrl() },
+                Event::DeviceEvent { event: DeviceEvent::Key(input), .. } =>  {
+                    if input.virtual_keycode == Some(VirtualKeyCode::W)
+                        && input.state == ElementState::Pressed
+                        && ctrl_key {
+                        *control_flow = ControlFlow::Exit
+                    }
+                }
                 event => {
                     imgui_platform.handle_event(imgui.io_mut(), gl_window.window(), &event);
                 }
