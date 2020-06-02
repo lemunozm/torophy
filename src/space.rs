@@ -27,4 +27,8 @@ impl Space {
     pub fn update(&mut self, interval: Duration) {
         //TODO
     }
+
+    pub fn bodies(&self) -> &Vec<RigidBody> {
+        &self.bodies
+    }
 }

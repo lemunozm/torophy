@@ -8,3 +8,4 @@ pub use math::*;
 pub use shapes::*;
 pub use body::*;
 pub use space::*;
+pub use spatial::Mobile;

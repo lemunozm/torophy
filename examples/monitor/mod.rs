@@ -42,7 +42,7 @@ impl GraphicMonitor {
         let display = glium::Display::new(window_builder, glutin_context, &event_loop)
             .expect("Failed to initialize glium display");
 
-        let renderer = renderer::Renderer::new(&display);
+        let renderer = renderer::Renderer::new(&display, (width as f32, height as f32));
 
         let mut imgui = imgui::Context::create();
         imgui.set_ini_filename(None);

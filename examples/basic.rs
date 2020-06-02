@@ -9,7 +9,7 @@ fn main() {
     body1.set_mass(3.0);
     body1.set_velocity(Vec2::xy(7.0, 4.0));
 
-    let shape2 = Circle::new(Vec2::xy(200.0, 200.0), 30.0);
+    let shape2 = Circle::new(Vec2::xy(400.0, 200.0), 20.0);
     let mut body2 = RigidBody::new(shape2);
     body2.set_mass(1.0);
     body2.set_velocity(Vec2::xy(-3.0, -1.0));

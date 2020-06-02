@@ -21,7 +21,7 @@ pub struct Renderer{
 }
 
 impl Renderer {
-    pub fn new(display: &Display) -> Renderer {
+    pub fn new(display: &Display, dimension: (f32, f32)) -> Renderer {
         let vertex_shader_src = r#"
             #version 140
 
@@ -43,11 +43,17 @@ impl Renderer {
             }
         "#;
 
+        let left = 0.0;
+        let right = dimension.0;
+        let bottom = dimension.1;
+        let top = 0.0;
+        let near = 0.0;
+        let far = 1.0;
         let perspective = [
-            [0.01, 0.0, 0.0, 0.0],
-            [0.0, 0.01, 0.0, 0.0],
-            [0.0, 0.0, 0.01, 0.0],
-            [0.0, 0.0, 0.0, 1.0]
+            [2.0 / right, 0.0, 0.0, 0.0],
+            [0.0, -2.0 / bottom, 0.0, 0.0],
+            [0.0, 0.0, -2.0, 0.0],
+            [-1.0, 1.0, -1.0, 1.0]
         ];
 
         Renderer {
@@ -58,15 +64,20 @@ impl Renderer {
     }
 
     pub fn stroke_circle(&self, target: &mut Frame, position: (f32, f32), radius: f32, points: usize) {
-        let vertex1 = Vertex::new(-5.0, -5.0);
-        let vertex2 = Vertex::new(-0.0, 5.0);
-        let vertex3 = Vertex::new(5.0, -2.0);
-        let shape = vec![vertex1, vertex2, vertex3];
+        let step_angle = (2.0 * std::f32::consts::PI) / points as f32;
+        let vertexes = (0..points).map(|i| {
+            let current_angle = i as f32* step_angle;
+            Vertex::new(position.0 + current_angle.cos() * radius, position.1 + current_angle.sin() * radius)
+        }).collect::<Vec<_>>();
 
-        let vertex_buffer = glium::VertexBuffer::new(&self.display, &shape).unwrap();
-        let indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
+        let vertex_buffer = glium::VertexBuffer::new(&self.display, &vertexes).unwrap();
+        let indices = glium::index::NoIndices(glium::index::PrimitiveType::LineLoop);
+        let params = glium::DrawParameters {
+            smooth: Some(glium::draw_parameters::Smooth::Fastest),
+            .. Default::default()
+        };
 
-        target.draw(&vertex_buffer, &indices, &self.stroke_program, &uniform!{perspective: self.perspective}, &Default::default()).unwrap();
+        target.draw(&vertex_buffer, &indices, &self.stroke_program, &uniform!{perspective: self.perspective}, &params).unwrap();
     }
 }
 
