@@ -1,6 +1,6 @@
 use torophy::{Space, RigidBody, Circle, Vec2, Mobile};
 
-use super::renderer::Renderer;
+use super::renderer::{Renderer, Color};
 
 pub fn draw_space(renderer: &Renderer, target: &mut glium::Frame, space: &Space) {
     for body in space.bodies() {
@@ -8,6 +8,7 @@ pub fn draw_space(renderer: &Renderer, target: &mut glium::Frame, space: &Space)
         let radius = circle.radius();
         let position = circle.position();
         let points = (radius * 2.0) as usize;
-        renderer.stroke_circle(target, (position.x, position.y), radius, points);
+        let color = Color::rgb(1.0, 0.0, 0.0);
+        renderer.stroke_circle(target, (position.x, position.y), radius, points, color);
     }
 }

@@ -1,6 +1,10 @@
 use super::math::vec2::Vec2;
 use super::spatial::Mobile;
 
+pub trait AxisAlignmentBoundingBox {
+    fn half_dimension(&self) -> Vec2;
+}
+
 #[derive(Clone)]
 pub struct Circle {
     position: Vec2, //Really used when the position could differ from the body's center of mass;
@@ -45,5 +49,11 @@ impl Mobile for Circle {
 
     fn rotation(&self) -> f32 {
         self.rotation
+    }
+}
+
+impl AxisAlignmentBoundingBox for Circle {
+    fn half_dimension(&self) -> Vec2 {
+        Vec2::xy(self.radius, self.radius)
     }
 }
