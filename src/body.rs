@@ -1,9 +1,9 @@
 use super::math::vec2::Vec2;
-use super::spatial::Mobile;
-use super::shapes::Circle;
+use super::shapes::Shape;
 
 pub struct RigidBody {
-    shape: Circle, // Should be generic Shape in the future
+    shape: Shape,
+    position: Vec2,
     inverse_mass: f32,
     velocity: Vec2,
     force: Vec2,
@@ -12,9 +12,10 @@ pub struct RigidBody {
 }
 
 impl RigidBody {
-    pub fn new(shape: Circle) -> RigidBody {
+    pub fn new(position: Vec2) -> RigidBody {
         RigidBody {
-            shape,
+            shape: Shape::None,
+            position,
             inverse_mass: 1.0,
             velocity: Vec2::zero(),
             force: Vec2::zero(),
@@ -23,12 +24,24 @@ impl RigidBody {
         }
     }
 
-    pub fn shape(&self) -> &Circle {
-        &self.shape
+    pub fn set_position(&mut self, position: Vec2) {
+        self.position = position;
     }
 
-    pub fn center_of_mass(&self) -> Vec2 {
-        self.shape.position()
+    pub fn displace(&mut self, displacement: Vec2) {
+        self.position += displacement;
+    }
+
+    pub fn position(&self) -> Vec2 {
+        self.position
+    }
+
+    pub fn set_shape(&mut self, shape: Shape) {
+        self.shape = shape
+    }
+
+    pub fn shape(&self) -> &Shape {
+        &self.shape
     }
 
     pub fn set_mass(&mut self, mass: f32) {
@@ -81,31 +94,5 @@ impl RigidBody {
 
     pub fn restitution(&self) -> f32 {
         self.restitution
-    }
-}
-
-impl Mobile for RigidBody {
-    fn set_position(&mut self, position: Vec2) {
-        self.shape.set_position(position);
-    }
-
-    fn displace(&mut self, displacement: Vec2) {
-        self.shape.displace(displacement);
-    }
-
-    fn position(&self) -> Vec2 {
-        self.shape.position()
-    }
-
-    fn set_rotation(&mut self, rotation: f32) {
-        self.shape.set_rotation(rotation);
-    }
-
-    fn rotate(&mut self, angle: f32) {
-        self.shape.rotate(angle);
-    }
-
-    fn rotation(&self) -> f32 {
-        self.shape.rotation()
     }
 }

@@ -9,7 +9,6 @@ use imgui_glium_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
 use std::time::Instant;
 
-mod ui;
 mod drawing;
 mod renderer;
 
@@ -105,7 +104,7 @@ impl GraphicMonitor {
                     drawing::draw_space(&renderer, &mut target, &space);
 
                     let mut imgui_ui = imgui.frame();
-                    ui::draw_ui(&mut imgui_ui);
+                    drawing::draw_ui(&mut imgui_ui);
                     imgui_platform.prepare_render(&imgui_ui, gl_window.window());
                     let imgui_draw_data = imgui_ui.render();
                     imgui_renderer.render(&mut target, imgui_draw_data).expect("Rendering failed");

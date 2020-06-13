@@ -1,6 +1,4 @@
 use glium::{implement_vertex, uniform, Display, Program, Frame, Surface};
-use rand::{Rng, SeedableRng, rngs::StdRng};
-//use rand::prelude;
 
 #[derive(Copy, Clone)]
 pub struct Vertex {
@@ -27,14 +25,6 @@ impl Color {
     pub fn rgb(red: f32, green: f32, blue: f32) -> Color {
         Color { data:  [red, green, blue, 1.0] }
     }
-
-    pub fn rgb_random(min: f32, max: f32, gen: &StdRng) -> Color {
-        let red = min + 0.0;
-        let green = min + 0.0;
-        let blue = min + 0.0;
-
-        Color { data:  [red, green, blue, 1.0] }
-    }
 }
 
 pub struct Renderer{
@@ -42,7 +32,6 @@ pub struct Renderer{
     stroke_program: Program,
     perspective: [[f32; 4]; 4],
     dimension: (f32, f32),
-    gen: StdRng,
 }
 
 impl Renderer {
@@ -85,7 +74,6 @@ impl Renderer {
             stroke_program: Program::from_source(display, vertex_shader_src, fragment_shader_src, None).unwrap(),
             perspective,
             dimension,
-            gen: StdRng::from_seed(&[0, 0])
         }
     }
 
@@ -103,8 +91,6 @@ impl Renderer {
             .. Default::default()
         };
 
-        let color: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
-
         let mut draw = |x, y| {
             let model = [
                 [1.0, 0.0, 0.0, 0.0],
@@ -113,7 +99,7 @@ impl Renderer {
                 [x, y, 0.0, 1.0]
             ];
 
-            let uniform_data = uniform!{perspective: self.perspective, model: model, color: color};
+            let uniform_data = uniform!{perspective: self.perspective, model: model, color: color.data};
             target.draw(&vertex_buffer, &indices, &self.stroke_program, &uniform_data, &params).unwrap();
         };
 
