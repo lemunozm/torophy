@@ -24,18 +24,15 @@ pub fn draw_space(renderer: &Renderer, target: &mut glium::Frame, space: &Space)
 
 use imgui::{Window, Condition, im_str};
 
-pub fn draw_ui(ui: &mut imgui::Ui) {
-    Window::new(im_str!("Hello world"))
-        .size([300.0, 100.0], Condition::FirstUseEver)
+pub fn draw_ui(ui: &mut imgui::Ui, space: &Space) {
+    Window::new(im_str!("Inspector"))
+        .position([5.0, 5.0], Condition::FirstUseEver)
+        .size([200.0, 0.0], Condition::FirstUseEver)
+        .collapsed(true, Condition::FirstUseEver)
         .build(&ui, || {
-            ui.text(im_str!("Hello world!"));
-            ui.text(im_str!("This...is...imgui-rs!"));
-            ui.separator();
             let mouse_pos = ui.io().mouse_pos;
-            ui.text(format!(
-                "Mouse Position: ({:.1},{:.1})",
-                mouse_pos[0], mouse_pos[1]
-            ));
+            ui.text(format!("Bodies: {}", space.bodies().len()));
+            ui.text(format!("Mouse position: ({:.0},{:.0})", mouse_pos[0], mouse_pos[1]));
         });
 }
 
