@@ -1,5 +1,5 @@
 use super::math::toroidal;
-use super::body::RigidBody;
+use super::body::{Particle, RigidBody};
 
 use std::time::Duration;
 
@@ -20,12 +20,19 @@ impl Space {
         &self.dimension
     }
 
-    pub fn add(&mut self, body: RigidBody) {
+    pub fn add(&mut self, mut body: RigidBody) {
+        body.set_position(self.dimension.get_toroidal_position(body.position()));
         self.bodies.push(body);
     }
 
-    pub fn update(&mut self, interval: Duration) {
-        //TODO
+    pub fn update(&mut self, duration: Duration) {
+        let dt = duration.as_secs_f32();
+        for body in &mut self.bodies {
+            body.integrate(dt);
+        }
+        for body in &mut self.bodies {
+            body.set_position(self.dimension.get_toroidal_position(body.position()));
+        }
     }
 
     pub fn bodies(&self) -> &Vec<RigidBody> {

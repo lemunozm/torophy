@@ -1,7 +1,7 @@
 use torophy::{Space};
 
 use glium::glutin;
-use glium::glutin::event::{Event, WindowEvent, DeviceEvent, VirtualKeyCode, ElementState, ModifiersState};
+use glium::glutin::event::{Event, WindowEvent, DeviceEvent, VirtualKeyCode, ElementState};
 use glium::glutin::event_loop::{ControlFlow, EventLoop};
 use glium::glutin::window::WindowBuilder;
 use glium::Surface;

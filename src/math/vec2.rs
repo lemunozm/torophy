@@ -27,6 +27,14 @@ impl Vec2 {
         self.x = 0.0;
         self.y = 0.0;
     }
+
+    pub fn length(&self) -> f32 {
+        (self.x * self.x + self.y * self.y).sqrt()
+    }
+
+    pub fn square_length(&self) -> f32 {
+        self.x * self.x + self.y * self.y
+    }
 }
 
 impl Add for Vec2 {

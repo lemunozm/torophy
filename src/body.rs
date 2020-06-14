@@ -1,6 +1,10 @@
 use super::math::vec2::Vec2;
 use super::shapes::Shape;
 
+pub trait Particle {
+    fn integrate(&mut self, dt: f32);
+}
+
 pub struct RigidBody {
     shape: Shape,
     position: Vec2,
@@ -94,5 +98,15 @@ impl RigidBody {
 
     pub fn restitution(&self) -> f32 {
         self.restitution
+    }
+}
+
+impl Particle for RigidBody {
+    fn integrate(&mut self, dt: f32) {
+        let real_force = self.force - self.velocity * (self.drag_force.0 + self.drag_force.1 * self.velocity.length());
+        self.velocity += real_force * (self.inverse_mass * dt);
+
+        self.displace(self.velocity * dt);
+        self.force = Vec2::zero();
     }
 }
