@@ -19,14 +19,14 @@ fn main() {
     body3.set_mass(3.0);
     body3.set_velocity(Vec2::xy(50.0, 80.0));
 
-    let mut space = Space::new(800, 600);
+    let mut space = Space::new(1000, 760);
     space.add(body1);
     space.add(body2);
     space.add(body3);
 
     monitor::GraphicMonitor::new(space)
         .main_loop(|space: &mut Space| {
-            space.update(Duration::from_secs_f32(0.0166));
+            space.update(Duration::from_secs_f32(0.0166)); //Real time simulation: 1 / 60 frames
         }
     );
 }

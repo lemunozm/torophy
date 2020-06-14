@@ -7,7 +7,7 @@ use glium::glutin::window::WindowBuilder;
 use glium::Surface;
 use imgui_glium_renderer::Renderer;
 use imgui_winit_support::{HiDpiMode, WinitPlatform};
-use std::time::Instant;
+use std::time::{Instant, Duration};
 
 mod drawing;
 mod renderer;
@@ -84,6 +84,7 @@ impl GraphicMonitor {
     where F: 'static + FnMut(&mut Space) {
         let GraphicMonitor { display, event_loop, renderer, mut imgui, mut imgui_renderer, mut imgui_platform, mut space } = self;
         let mut last_frame = Instant::now();
+        let mut last_physics_time = Duration::from_secs(0);
         let mut ctrl_key = false;
         event_loop.run(move |event, _, control_flow| {
             let gl_window = display.gl_window();
@@ -91,6 +92,7 @@ impl GraphicMonitor {
                 Event::NewEvents(_) => {
                     last_frame = imgui.io_mut().update_delta_time(last_frame);
                     frame_action(&mut space);
+                    last_physics_time = Instant::now() - last_frame;
                 },
                 Event::MainEventsCleared => {
                     imgui_platform.prepare_frame(imgui.io_mut(), &gl_window.window())
@@ -104,7 +106,7 @@ impl GraphicMonitor {
                     drawing::draw_space(&renderer, &mut target, &space);
 
                     let mut imgui_ui = imgui.frame();
-                    drawing::draw_ui(&mut imgui_ui, &space);
+                    drawing::draw_ui(&mut imgui_ui, &space, last_physics_time);
                     imgui_platform.prepare_render(&imgui_ui, gl_window.window());
                     let imgui_draw_data = imgui_ui.render();
                     imgui_renderer.render(&mut target, imgui_draw_data).expect("Rendering failed");
