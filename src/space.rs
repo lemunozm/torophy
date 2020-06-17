@@ -4,6 +4,7 @@ use super::collision::{CollisionResolver, Contact};
 use super::util::{BorrowMutTwo};
 
 use std::time::Duration;
+use std::slice::{Iter, IterMut};
 
 pub struct Space {
     bounds: Bounds,
@@ -24,8 +25,12 @@ impl Space {
         &self.bounds
     }
 
-    pub fn bodies(&self) -> &Vec<Body> {
-        &self.bodies
+    pub fn bodies(&self) -> Iter<Body> {
+        self.bodies.iter()
+    }
+
+    pub fn bodies_mut(&mut self) -> IterMut<Body> {
+        self.bodies.iter_mut()
     }
 
     pub fn add(&mut self, mut body: Body) {
