@@ -1,7 +1,6 @@
 use super::math::toroidal::{Bounds};
 use super::body::{Particle, Body};
-use super::collision::{CollisionResolver};
-use super::contact::{Contact};
+use super::collision::{CollisionResolver, Contact};
 use super::util::{BorrowMutTwo};
 
 use std::time::Duration;
@@ -9,7 +8,7 @@ use std::time::Duration;
 pub struct Space {
     bounds: Bounds,
     bodies: Vec<Body>,
-    contacts: Vec<Contact>, // stored for performance
+    contacts_info: Vec<ContactInfo>, // stored for performance
 }
 
 impl Space {
@@ -17,7 +16,7 @@ impl Space {
         Space {
             bounds: Bounds::new(width, height),
             bodies: Vec::new(),
-            contacts: Vec::new(),
+            contacts_info: Vec::new(),
         }
     }
 
@@ -41,23 +40,19 @@ impl Space {
         }
 
         let collision_resolver = CollisionResolver::new(&self.bounds);
-        self.contacts.clear();
+        self.contacts_info.clear();
         for i1 in 0..self.bodies.len() {
             for i2 in (i1 + 1)..self.bodies.len() {
-                if let Some(collision_info) = collision_resolver.test_collision(&self.bodies[i1], &self.bodies[i2]) {
-                    let contact = Contact {
-                        first: i1,
-                        second: i2,
-                        collision_info,
-                    };
-                    self.contacts.push(contact);
+                if let Some(contact) = collision_resolver.test_collision(&self.bodies[i1], &self.bodies[i2]) {
+                    let contact = ContactInfo { first: i1, second: i2, contact };
+                    self.contacts_info.push(contact);
                 }
             }
         }
 
-        for contact in &mut self.contacts {
-            let (b1, b2) = self.bodies.get_two_mut(contact.first, contact.second);
-            contact.resolve(b1, b2);
+        for contact_info in &mut self.contacts_info {
+            let (b1, b2) = self.bodies.get_two_mut(contact_info.first, contact_info.second);
+            contact_info.contact.resolve(b1, b2);
         }
 
         for body in &mut self.bodies {
@@ -65,3 +60,10 @@ impl Space {
         }
     }
 }
+
+pub struct ContactInfo {
+    first: usize,
+    second: usize,
+    contact: Contact,
+}
+

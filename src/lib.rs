@@ -1,6 +1,5 @@
 pub mod collision;
 pub mod util;
-pub mod contact;
 
 pub mod math;
 pub mod shapes;
