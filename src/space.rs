@@ -43,7 +43,7 @@ impl Space {
         self.contacts_info.clear();
         for i1 in 0..self.bodies.len() {
             for i2 in (i1 + 1)..self.bodies.len() {
-                if let Some(contact) = collision_resolver.test_collision(&self.bodies[i1], &self.bodies[i2]) {
+                if let Some(contact) = collision_resolver.check_collision(&self.bodies[i1], &self.bodies[i2]) {
                     let contact = ContactInfo { first: i1, second: i2, contact };
                     self.contacts_info.push(contact);
                 }

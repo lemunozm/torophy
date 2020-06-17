@@ -53,19 +53,19 @@ impl<'a> CollisionResolver<'a> {
         CollisionResolver { bounds }
     }
 
-    pub fn test_collision(&self, b1: &Body, b2: &Body) -> Option<Contact> {
-        match b1.shape() {
+    pub fn check_collision(&self, b1: &Body, b2: &Body) -> Option<Contact> {
+        match *b1.shape() {
             Shape::None => None,
-            Shape::Circle(r1) => match b2.shape() {
+            Shape::Circle(r1) => match *b2.shape() {
                 Shape::None => None,
                 Shape::Circle(r2) => {
-                    self.test_circle_circle(b1.position(), *r1, b2.position(), *r2)
+                    self.check_circle_circle(b1.position(), r1, b2.position(), r2)
                 },
             },
         }
     }
 
-    fn test_circle_circle(&self, p1: Vec2, r1: f32, p2: Vec2, r2: f32) -> Option<Contact> {
+    fn check_circle_circle(&self, p1: Vec2, r1: f32, p2: Vec2, r2: f32) -> Option<Contact> {
         let distance = self.bounds.get_toroidal_distance(p1 - p2);
         let collision_length = r1 + r2;
         if distance.square_length() < collision_length * collision_length {
