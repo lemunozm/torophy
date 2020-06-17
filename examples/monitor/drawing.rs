@@ -12,11 +12,11 @@ pub fn draw_space(renderer: &Renderer, target: &mut glium::Frame, space: &Space)
         let color = Color::rgb(rng.gen_range(0.2, 0.8), rng.gen_range(0.2, 0.8), rng.gen_range(0.2, 0.8));
         match body.shape() {
             Shape::None => {
-                renderer.stroke_circle(target, (position.x, position.y), 2.0, 4, color);
+                renderer.stroke_toroidal_circle(target, (position.x, position.y), 1.0, 4, color);
             },
             Shape::Circle(radius) => {
                 let points = (radius * 2.0) as usize;
-                renderer.stroke_circle(target, (position.x, position.y), *radius, points, color);
+                renderer.stroke_toroidal_circle(target, (position.x, position.y), *radius, points, color);
             },
         }
     }

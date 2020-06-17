@@ -23,6 +23,10 @@ impl Vec2 {
         Vec2 {x: 0.0, y}
     }
 
+    pub fn from_angle(angle: f32) -> Vec2 {
+        Vec2 {x: angle.cos(), y: angle.sin()}
+    }
+
     pub fn clear(&mut self) {
         self.x = 0.0;
         self.y = 0.0;

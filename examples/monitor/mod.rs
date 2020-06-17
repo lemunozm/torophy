@@ -26,12 +26,11 @@ pub struct GraphicMonitor {
 
 impl GraphicMonitor {
     pub fn new(space: Space) -> GraphicMonitor {
-        let width = space.dimension().width;
-        let height = space.dimension().height;
+        let dimension = space.bounds().dimension();
 
         let window_builder = WindowBuilder::new()
             .with_title("Torophy monitor")
-            .with_inner_size(glutin::dpi::LogicalSize::new(width, height));
+            .with_inner_size(glutin::dpi::LogicalSize::new(dimension.x, dimension.y));
 
         let glutin_context = glutin::ContextBuilder::new()
             .with_multisampling(8)
@@ -41,7 +40,7 @@ impl GraphicMonitor {
         let display = glium::Display::new(window_builder, glutin_context, &event_loop)
             .expect("Failed to initialize glium display");
 
-        let renderer = renderer::Renderer::new(&display, (width as f32, height as f32));
+        let renderer = renderer::Renderer::new(&display, (dimension.x, dimension.y));
 
         let mut imgui = imgui::Context::create();
         imgui.set_ini_filename(None);

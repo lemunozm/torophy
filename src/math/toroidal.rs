@@ -33,13 +33,17 @@ pub fn min_coordinate(coordinate: f32, length: u32) -> f32 {
     }
 }
 
-/// A 2D toroidal dimension definition
-pub struct Dimension {
+/// A 2D toroidal bounds definition
+pub struct Bounds {
     pub width: u32,
     pub height: u32,
 }
 
-impl Dimension {
+impl Bounds {
+    pub fn new(width: u32, height: u32) -> Bounds {
+        Bounds { width, height }
+    }
+
     /// Similar to [`toroidal::min_distance()`](min_distance()) but for a 2D toroidal space.
     pub fn get_toroidal_distance(&self, distance: Vec2) -> Vec2 {
         Vec2::xy(
@@ -54,6 +58,11 @@ impl Dimension {
             min_coordinate(position.x, self.width),
             min_coordinate(position.y, self.height),
         )
+    }
+
+    /// Returns the bounds dimension value as a float vector.
+    pub fn dimension(&self) -> Vec2 {
+        Vec2::xy(self.width as f32, self.height as f32)
     }
 }
 

@@ -5,7 +5,7 @@ pub trait Particle {
     fn integrate(&mut self, dt: f32);
 }
 
-pub struct RigidBody {
+pub struct Body {
     shape: Shape,
     position: Vec2,
     inverse_mass: f32,
@@ -15,9 +15,9 @@ pub struct RigidBody {
     restitution: f32,
 }
 
-impl RigidBody {
-    pub fn new(position: Vec2) -> RigidBody {
-        RigidBody {
+impl Body {
+    pub fn new(position: Vec2) -> Body {
+        Body {
             shape: Shape::None,
             position,
             inverse_mass: 1.0,
@@ -101,7 +101,7 @@ impl RigidBody {
     }
 }
 
-impl Particle for RigidBody {
+impl Particle for Body {
     fn integrate(&mut self, dt: f32) {
         let real_force = self.force - self.velocity * (self.drag_force.0 + self.drag_force.1 * self.velocity.length());
         self.velocity += real_force * (self.inverse_mass * dt);

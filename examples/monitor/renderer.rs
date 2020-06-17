@@ -18,10 +18,6 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn rgba(red: f32, green: f32, blue: f32, alpha: f32) -> Color {
-        Color { data:  [red, green, blue, alpha] }
-    }
-
     pub fn rgb(red: f32, green: f32, blue: f32) -> Color {
         Color { data:  [red, green, blue, 1.0] }
     }
@@ -77,7 +73,7 @@ impl Renderer {
         }
     }
 
-    pub fn stroke_circle(&self, target: &mut Frame, position: (f32, f32), radius: f32, points: usize, color: Color) {
+    pub fn stroke_toroidal_circle(&self, target: &mut Frame, position: (f32, f32), radius: f32, points: usize, color: Color) {
         let step_angle = (2.0 * std::f32::consts::PI) / points as f32;
         let vertexes = (0..points).map(|i| {
             let current_angle = i as f32* step_angle;
@@ -103,15 +99,30 @@ impl Renderer {
             target.draw(&vertex_buffer, &indices, &self.stroke_program, &uniform_data, &params).unwrap();
         };
 
+        let mut limits_exceeded = 0;
         draw(position.0, position.1);
-        draw(position.0 + self.dimension.0, position.1);
-        draw(position.0 - self.dimension.0, position.1);
-        draw(position.0, position.1 + self.dimension.1);
-        draw(position.0, position.1 - self.dimension.1);
-        draw(position.0 + self.dimension.0, position.1 + self.dimension.1);
-        draw(position.0 + self.dimension.0, position.1 - self.dimension.1);
-        draw(position.0 - self.dimension.0, position.1 + self.dimension.1);
-        draw(position.0 - self.dimension.0, position.1 - self.dimension.1);
+        if position.0 - radius < 0.0 {
+            draw(position.0 + self.dimension.0, position.1);
+            limits_exceeded += 1;
+        }
+        if position.1 - radius < 0.0 {
+            draw(position.0, position.1 + self.dimension.1);
+            limits_exceeded += 1;
+        }
+        if position.0 + radius > self.dimension.0 {
+            draw(position.0 - self.dimension.0, position.1);
+            limits_exceeded += 1;
+        }
+        if position.1 + radius > self.dimension.1 {
+            draw(position.0, position.1 - self.dimension.1);
+            limits_exceeded += 1;
+        }
+        if limits_exceeded == 2 { // Screen corner case
+            draw(position.0 + self.dimension.0, position.1 + self.dimension.1);
+            draw(position.0 + self.dimension.0, position.1 - self.dimension.1);
+            draw(position.0 - self.dimension.0, position.1 + self.dimension.1);
+            draw(position.0 - self.dimension.0, position.1 - self.dimension.1);
+        }
     }
 }
 
