@@ -64,24 +64,10 @@ impl Sub for Vec2 {
 }
 
 impl Mul for Vec2 {
-    type Output = Vec2;
+    type Output = f32;
 
-    fn mul(self, other: Vec2) -> Vec2 {
-        Vec2 {
-            x: self.x * other.x,
-            y: self.y * other.y,
-        }
-    }
-}
-
-impl Div for Vec2 {
-    type Output = Vec2;
-
-    fn div(self, other: Vec2) -> Vec2 {
-        Vec2 {
-            x: self.x / other.x,
-            y: self.y / other.y,
-        }
+    fn mul(self, other: Vec2) -> f32 {
+        self.x * other.x + self.y * other.y
     }
 }
 
@@ -127,18 +113,6 @@ impl AddAssign for Vec2 {
 impl SubAssign for Vec2 {
     fn sub_assign(&mut self, other: Vec2) {
         *self = *self - other
-    }
-}
-
-impl MulAssign for Vec2 {
-    fn mul_assign(&mut self, other: Vec2) {
-        *self = *self * other
-    }
-}
-
-impl DivAssign for Vec2 {
-    fn div_assign(&mut self, other: Vec2) {
-        *self = *self / other
     }
 }
 

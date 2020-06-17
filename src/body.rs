@@ -60,6 +60,10 @@ impl Body {
         1.0 / self.inverse_mass
     }
 
+    pub fn inverse_mass(&self) -> f32 {
+        self.inverse_mass
+    }
+
     pub fn set_velocity(&mut self, velocity: Vec2) {
         self.velocity = velocity
     }
@@ -110,3 +114,4 @@ impl Particle for Body {
         self.force = Vec2::zero();
     }
 }
+

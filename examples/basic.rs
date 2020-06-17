@@ -7,21 +7,21 @@ fn main() {
     let mut space = Space::new(800, 600);
 
     let mut body1 = Body::new(Vec2::xy(200.0, 200.0));
-    body1.set_shape(Circle(30.0));
+    body1.set_shape(Circle(60.0));
     body1.set_mass(3.0);
-    body1.set_velocity(Vec2::xy(70.0, 40.0));
+    body1.set_velocity(Vec2::xy(100.0, 80.0));
     space.add(body1);
 
     let mut body2 = Body::new(Vec2::xy(400.0, 200.0));
-    body2.set_shape(Circle(20.0));
+    body2.set_shape(Circle(40.0));
     body2.set_mass(1.0);
-    body2.set_velocity(Vec2::xy(-30.0, -100.0));
+    body2.set_velocity(Vec2::xy(-60.0, -200.0));
     space.add(body2);
 
     let mut body3 = Body::new(Vec2::xy(800.0, 0.0));
-    body3.set_shape(Circle(50.0));
+    body3.set_shape(Circle(100.0));
     body3.set_mass(3.0);
-    body3.set_velocity(Vec2::xy(50.0, 80.0));
+    body3.set_velocity(Vec2::xy(-100.0, 160.0));
     space.add(body3);
 
     monitor::GraphicMonitor::new(space)
