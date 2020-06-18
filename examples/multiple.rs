@@ -5,7 +5,7 @@ use rand::{Rng, SeedableRng, rngs::StdRng, distributions::Uniform};
 mod monitor;
 
 fn main() {
-    let mut space = Space::new(800, 600);
+    let mut space = Space::new(800, 600).with_optimization_cell_size(30.0);
 
     let angle_dist = Uniform::new(-std::f32::consts::PI, std::f32::consts::PI);
     let mass_dist = Uniform::new(1.0, 10.0);

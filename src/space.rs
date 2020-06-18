@@ -20,12 +20,16 @@ impl Space {
             bounds: Bounds::new(width, height),
             bodies: Vec::new(),
             contacts_info: Vec::new(),
-            spatial_table: SpatialTable::new(width, height, 30.0),
+            spatial_table: SpatialTable::new(width, height, width as f32 / 10.0),
         }
     }
 
-    pub fn configure_spatial_table(&mut self, cell_size: f32) {
+    /// A convenient method to modify optionally the internal cell_size during the Space building.
+    /// This cell_size value is used as a heuristic for performance reasons when collisions are involved.
+    /// A value between 1 or 2 times the average size of the shapes works fine.
+    pub fn with_optimization_cell_size(mut self, cell_size: f32) -> Space {
         self.spatial_table = SpatialTable::new(self.bounds.width, self.bounds.height, cell_size);
+        self
     }
 
     pub fn bounds(&self) -> &Bounds {
@@ -45,6 +49,11 @@ impl Space {
         self.bodies.push(body);
     }
 
+    /// Main function that performs a physics step over the bodies in the space.
+    /// The duration paramenter is the integration time value.
+    /// It represents the physics interval that will be emulated.
+    /// High 'duration' value will needs low to call this funcion but reduce the physics accuracy resolution.
+    /// Less 'duration' value will needs more calls to update but improve the physics accuracy resolution.
     pub fn update(&mut self, duration: Duration) {
         let dt = duration.as_secs_f32();
         for body in &mut self.bodies {
@@ -70,27 +79,6 @@ impl Space {
                 self.contacts_info.push(contact);
             }
         }
-
-        //TODO: brute force ---
-        /*
-        let collision_resolver = CollisionResolver::new(&self.bounds);
-        self.contacts_info.clear();
-        for i1 in 0..self.bodies.len() {
-            let b1 = &self.bodies[i1];
-            if let Some(s1) = b1.shape() {
-                for i2 in (i1 + 1)..self.bodies.len() {
-                    let b2 = &self.bodies[i2];
-                    if let Some(s2) = b2.shape() {
-                        if let Some(contact) = collision_resolver.check_collision(b1.position(), &s1, b2.position(), &s2) {
-                            let contact = ContactInfo { first: i1, second: i2, contact };
-                            self.contacts_info.push(contact);
-                        }
-                    }
-                }
-            }
-        }
-        */
-        // ---
 
         for ContactInfo { first, second, contact } in &mut self.contacts_info {
             let (b1, b2) = self.bodies.get_two_mut(*first, *second);
