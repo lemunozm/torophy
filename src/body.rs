@@ -1,12 +1,17 @@
 use super::math::vec2::Vec2;
-use super::shapes::Shape;
+use super::shapes::{Shape, Contact};
 
 pub trait Particle {
     fn integrate(&mut self, dt: f32);
 }
 
+pub trait ContactResolver {
+    fn resolve_overlap(&self, b1: &mut Body, b2: &mut Body);
+    fn resolve_velocity(&self, b1: &mut Body, b2: &mut Body);
+}
+
 pub struct Body {
-    shape: Shape,
+    shape: Option<Shape>,
     position: Vec2,
     inverse_mass: f32,
     velocity: Vec2,
@@ -18,7 +23,7 @@ pub struct Body {
 impl Body {
     pub fn new(position: Vec2) -> Body {
         Body {
-            shape: Shape::None,
+            shape: None,
             position,
             inverse_mass: 1.0,
             velocity: Vec2::zero(),
@@ -41,10 +46,14 @@ impl Body {
     }
 
     pub fn set_shape(&mut self, shape: Shape) {
-        self.shape = shape
+        self.shape = Some(shape)
     }
 
-    pub fn shape(&self) -> &Shape {
+    pub fn remove_shape(&mut self) {
+        self.shape = None;
+    }
+
+    pub fn shape(&self) -> &Option<Shape> {
         &self.shape
     }
 
@@ -115,3 +124,26 @@ impl Particle for Body {
     }
 }
 
+impl ContactResolver for Contact {
+    fn resolve_overlap(&self, b1: &mut Body, b2: &mut Body) {
+        let total_inverse_mass = b1.inverse_mass() + b2.inverse_mass();
+        let displacement = self.normal() * (self.overlap() / total_inverse_mass);
+
+        b1.displace(displacement * b1.inverse_mass());
+        b2.displace(displacement * -b2.inverse_mass());
+    }
+
+    fn resolve_velocity(&self, b1: &mut Body, b2: &mut Body) {
+        let separating_speed = self.normal() * (b1.velocity() - b2.velocity());
+        if separating_speed < 0.0 {
+            let new_separating_speed = -separating_speed * b1.restitution() * b2.restitution();
+            let delta_speed  = new_separating_speed - separating_speed;
+
+            let total_inverse_mass = b1.inverse_mass() + b2.inverse_mass();
+            let impulse = self.normal() * (delta_speed / total_inverse_mass);
+
+            b1.add_velocity(impulse * b1.inverse_mass());
+            b2.add_velocity(impulse * -b2.inverse_mass());
+        }
+    }
+}

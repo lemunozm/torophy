@@ -1,6 +1,6 @@
 use super::math::toroidal::{Bounds};
-use super::body::{Particle, Body};
-use super::collision::{CollisionResolver, Contact};
+use super::body::{Body, Particle, ContactResolver};
+use super::shapes::{CollisionResolver, Contact};
 use super::util::{BorrowMutTwo};
 
 use std::time::Duration;
@@ -47,17 +47,24 @@ impl Space {
         let collision_resolver = CollisionResolver::new(&self.bounds);
         self.contacts_info.clear();
         for i1 in 0..self.bodies.len() {
-            for i2 in (i1 + 1)..self.bodies.len() {
-                if let Some(contact) = collision_resolver.check_collision(&self.bodies[i1], &self.bodies[i2]) {
-                    let contact = ContactInfo { first: i1, second: i2, contact };
-                    self.contacts_info.push(contact);
+            let b1 = &self.bodies[i1];
+            if let Some(s1) = b1.shape() {
+                for i2 in (i1 + 1)..self.bodies.len() {
+                    let b2 = &self.bodies[i2];
+                    if let Some(s2) = b2.shape() {
+                        if let Some(contact) = collision_resolver.check_collision(b1.position(), &s1, b2.position(), &s2) {
+                            let contact = ContactInfo { first: i1, second: i2, contact };
+                            self.contacts_info.push(contact);
+                        }
+                    }
                 }
             }
         }
 
-        for contact_info in &mut self.contacts_info {
-            let (b1, b2) = self.bodies.get_two_mut(contact_info.first, contact_info.second);
-            contact_info.contact.resolve(b1, b2);
+        for ContactInfo { first, second, contact } in &mut self.contacts_info {
+            let (b1, b2) = self.bodies.get_two_mut(*first, *second);
+            contact.resolve_overlap(b1, b2);
+            contact.resolve_velocity(b1, b2);
         }
 
         for body in &mut self.bodies {
