@@ -1,4 +1,4 @@
-use super::math::vec2::Vec2;
+use super::math::{Vec2, bounding::AxisAlignmentBoundingBox};
 use super::shapes::{Shape, Contact};
 
 pub trait Particle {
@@ -53,8 +53,8 @@ impl Body {
         self.shape = None;
     }
 
-    pub fn shape(&self) -> &Option<Shape> {
-        &self.shape
+    pub fn shape(&self) -> Option<&Shape> {
+        self.shape.as_ref()
     }
 
     pub fn set_mass(&mut self, mass: f32) {
@@ -111,6 +111,10 @@ impl Body {
 
     pub fn restitution(&self) -> f32 {
         self.restitution
+    }
+
+    pub fn aabb(&self) -> Option<AxisAlignmentBoundingBox> {
+        self.shape.as_ref().map(|shape| AxisAlignmentBoundingBox::new(self.position, shape.half_dimension()))
     }
 }
 

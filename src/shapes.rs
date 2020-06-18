@@ -5,6 +5,14 @@ pub enum Shape {
     Circle(f32),
 }
 
+impl Shape {
+    pub fn half_dimension(&self) -> Vec2 {
+        match *self {
+            Shape::Circle(radius) => Vec2::xy(radius, radius)
+        }
+    }
+}
+
 pub struct Contact {
     normal: Vec2,
     overlap: f32,

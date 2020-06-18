@@ -1,6 +1,7 @@
 use super::math::toroidal::{Bounds};
 use super::body::{Body, Particle, ContactResolver};
 use super::shapes::{CollisionResolver, Contact};
+use super::spatial_table::{SpatialTable};
 use super::util::{BorrowMutTwo};
 
 use std::time::Duration;
@@ -9,6 +10,7 @@ use std::slice::{Iter, IterMut};
 pub struct Space {
     bounds: Bounds,
     bodies: Vec<Body>,
+    spatial_table: SpatialTable,
     contacts_info: Vec<ContactInfo>, // stored for performance
 }
 
@@ -18,7 +20,12 @@ impl Space {
             bounds: Bounds::new(width, height),
             bodies: Vec::new(),
             contacts_info: Vec::new(),
+            spatial_table: SpatialTable::new(width, height, 30.0),
         }
+    }
+
+    pub fn configure_spatial_table(&mut self, cell_size: f32) {
+        self.spatial_table = SpatialTable::new(self.bounds.width, self.bounds.height, cell_size);
     }
 
     pub fn bounds(&self) -> &Bounds {
@@ -44,6 +51,28 @@ impl Space {
             body.integrate(dt);
         }
 
+        self.spatial_table.clear();
+        for (i, body) in self.bodies.iter().enumerate() {
+            if let Some(aabb) = body.aabb() {
+                self.spatial_table.insert(i, &self.bounds.get_toroidal_aabb(&aabb));
+            }
+        }
+
+        let collision_resolver = CollisionResolver::new(&self.bounds);
+        self.contacts_info.clear();
+        for pair in self.spatial_table.pairs() {
+            let b1 = &self.bodies[pair.0];
+            let b2 = &self.bodies[pair.1];
+            let s1 = b1.shape().unwrap();
+            let s2 = b2.shape().unwrap();
+            if let Some(contact) = collision_resolver.check_collision(b1.position(), &s1, b2.position(), &s2) {
+                let contact = ContactInfo { first: pair.0, second: pair.1, contact };
+                self.contacts_info.push(contact);
+            }
+        }
+
+        //TODO: brute force ---
+        /*
         let collision_resolver = CollisionResolver::new(&self.bounds);
         self.contacts_info.clear();
         for i1 in 0..self.bodies.len() {
@@ -60,6 +89,8 @@ impl Space {
                 }
             }
         }
+        */
+        // ---
 
         for ContactInfo { first, second, contact } in &mut self.contacts_info {
             let (b1, b2) = self.bodies.get_two_mut(*first, *second);

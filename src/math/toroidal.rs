@@ -1,4 +1,5 @@
-use super::vec2::Vec2;
+use super::Vec2;
+use super::bounding::AxisAlignmentBoundingBox;
 
 /// Computes the minimal analogous distance in a toroidal space of the specified length.
 /// The maximun value for this minimal distance is never greater of length / 2.
@@ -57,6 +58,16 @@ impl Bounds {
         Vec2::xy(
             min_coordinate(position.x, self.width),
             min_coordinate(position.y, self.height),
+        )
+    }
+
+    /// Similar to [`toroidal::min_coordinate()`](min_coordinate())` but for an AABB.
+    pub fn get_toroidal_aabb(&self, aabb: &AxisAlignmentBoundingBox) -> AxisAlignmentBoundingBox {
+        AxisAlignmentBoundingBox::from_bounds(
+            min_coordinate(aabb.left(), self.width),
+            min_coordinate(aabb.right(), self.width),
+            min_coordinate(aabb.top(), self.height),
+            min_coordinate(aabb.bottom(), self.height),
         )
     }
 

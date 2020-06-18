@@ -11,11 +11,12 @@ fn main() {
     let mass_dist = Uniform::new(1.0, 10.0);
     let mut rng = StdRng::seed_from_u64(0);
 
-    for _ in 0..100 {
-        let mass: f32 = rng.sample(mass_dist);
+    for _ in 0..200 {
         let mut body = Body::new(space.bounds().dimension() / 2.0);
-        body.set_shape(Circle(mass.sqrt() * 10.0));
+        let mass: f32 = rng.sample(mass_dist);
+        let radius = (mass / std::f32::consts::PI).sqrt() * 10.0;
         body.set_mass(mass);
+        body.set_shape(Circle(radius));
         body.set_velocity(Vec2::from_angle(rng.sample(angle_dist)) * 80.0);
         body.set_restitution(0.5);
         space.add(body);
