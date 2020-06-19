@@ -1,3 +1,7 @@
+[![torophy](https://img.shields.io/crates/v/torophy)](https://crates.io/crates/torophy)
+[![license](https://img.shields.io/crates/l/torophy)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+[![downloads](https://img.shields.io/crates/d/torophy)](https://crates.io/crates/torophy)
+
 # `torophy`
 2D physics engine over a toroidal space.
 The aim of this project is to test and experiment with physics over a toroidal space.

@@ -1,12 +1,15 @@
 [package]
 name = "torophy"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["lemunozm <lemunozm@gmail.com>"]
 edition = "2018"
 description = "2D physics engine over a toroidal space"
 license = "Apache-2.0"
 homepage = "https://github.com/lemunozm/torophy/"
 repository = "https://github.com/lemunozm/torophy/"
+readme = "README.md"
+keywords = ["physics", "physics-engine", "simulator", "simulation", "toroidal"]
+categories = ["game-engines", "game-development", "simulation", "science", "mathematics"]
 
 [dependencies]
 

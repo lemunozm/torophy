@@ -877,7 +877,7 @@ checksum = "36ae8932fcfea38b7d3883ae2ab357b0d57a02caaa18ebb4f5ece08beaec4aa0"
 
 [[package]]
 name = "torophy"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "glium",
  "imgui",
