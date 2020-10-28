@@ -40,6 +40,12 @@ git clone https://github.com/lemunozm/torophy.git
 cargo run --example basic --release
 ```
 
+## Getting started
+Add to your `Cargo.toml`
+```sh
+torophy = "0.1"
+```
+
 You can change `basic` name for any other example name found in the `examples` folder.
 
 ## Contribute!
