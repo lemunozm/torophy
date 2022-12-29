@@ -50,10 +50,10 @@ impl Space {
     }
 
     /// Main function that performs a physics step over the bodies in the space.
-    /// The duration paramenter is the integration time value.
+    /// The duration parameter is the integration time value.
     /// It represents the physics interval that will be emulated.
-    /// High 'duration' value will needs low to call this funcion but reduce the physics accuracy resolution.
-    /// Less 'duration' value will needs more calls to update but improve the physics accuracy resolution.
+    /// High 'duration' values will need less calls to this function but will reduce the physics accuracy resolution.
+    /// Less 'duration' values will need more calls to update but will improve the physics accuracy resolution.
     pub fn update(&mut self, duration: Duration) {
         let dt = duration.as_secs_f32();
         for body in &mut self.bodies {

@@ -2,7 +2,7 @@ use super::Vec2;
 use super::bounding::AxisAlignmentBoundingBox;
 
 /// Computes the minimal analogous distance in a toroidal space of the specified length.
-/// The maximun value for this minimal distance is never greater of length / 2.
+/// The maximum value for this minimal distance is never greater than length / 2.
 pub fn min_distance(distance: f32, length: u32) -> f32 {
     let length = length as f32;
     let half_length = length / 2.0;
@@ -17,7 +17,7 @@ pub fn min_distance(distance: f32, length: u32) -> f32 {
     }
 }
 
-/// Computes the mininal representation of a coordinate in a toroidal space of the specified length.
+/// Computes the minimal representation of a coordinate in a toroidal space of the specified length.
 /// The computed coordinate is always between 0 and length.
 pub fn min_coordinate(coordinate: f32, length: u32) -> f32 {
     if coordinate >= 0.0 {
